@@ -18,6 +18,7 @@ new Grid({
 }).load();
 ```
 
+you can create a form with this code:
 ```js
 let form = new Form({
         id: 'search-form',
