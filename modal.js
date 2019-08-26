@@ -37,9 +37,12 @@ class Modal {
     }
 
     show() {
-        if (typeof this.body === 'object') {
+        if (typeof this.body === 'object' && this.body instanceof Form) {
             this.renderedBody = this.body.renderElements();
             this.renderedFooter = this.body.renderActions();
+        }else if (typeof this.body === 'object' && this.body instanceof Grid) {
+            this.renderedBody = this.body.render();
+            this.renderedFooter = this.footer;
         } else {
             this.renderedBody = this.body;
             this.renderedFooter = this.footer;
@@ -51,8 +54,10 @@ class Modal {
             $('#' + this.id).modal('dispose');
             $('#' + this.id).remove();
         });
-        if (typeof this.body === 'object') {
+        if (typeof this.body === 'object' && this.body instanceof Form) {
             this.body.init();
+        }else if (typeof this.body === 'object' && this.body instanceof Grid) {
+             // this.body.load();
         }
 
 

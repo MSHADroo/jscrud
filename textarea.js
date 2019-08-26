@@ -21,7 +21,7 @@ class TextArea {
         }
         return `<div class="form-group ${col}">
                     <label for="${this.id}">${this.title}</label>
-                    <textarea class="form-control" id="${this.id}" rows="3" aria-describedby="${this.id}Help" placeholder="${this.placeholder}" ${this.disable}></textarea>
+                    <textarea class="form-control" id="${this.id}" name="${this.id}" rows="3" aria-describedby="${this.id}Help" placeholder="${this.placeholder}" ${this.disable}></textarea>
                     <small id="${this.id}Help" class="form-text text-muted">${this.hint}</small>
                   </div>`;
     }

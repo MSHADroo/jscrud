@@ -9,12 +9,13 @@ class Grid {
         this.actions = params.actions ? params.actions : undefined;
         this.params = params.params ? params.params : undefined;
 
+        let me = this;
         $.each(this.columns, function (k, v) {
             if (v.type) {
                 if (v.type === 'price') {
                     v.render = function (data, type, row, meta) {
                         if (data) {
-                            return this.priceCommaSeparator(data);
+                            return me.priceCommaSeparator(data);
                         } else {
                             return ''
                         }
@@ -46,7 +47,7 @@ class Grid {
             }
         });
 
-        var me = this;
+        // var me = this;
         this.default = {
             // ajax: {
             //     dataSrc: ""
@@ -64,6 +65,8 @@ class Grid {
             // ],
             // ordering: false,
             // order: [[0, 'asc']],
+            // bSort: false,
+            aaSorting: [],
             stateSave: true,
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Show All"]],
             pagingType: "full_numbers",
@@ -80,7 +83,8 @@ class Grid {
                     colvis:
                         '<i class="fa fa-eye-slash" aria-hidden="true" title="Show/Hide Columns"></i>'
                 }
-            }, orderCellsTop: true,
+            },
+            orderCellsTop: true,
             fixedHeader: true,
             initComplete: function () {
                 var filter = [];
@@ -135,7 +139,7 @@ class Grid {
                 render: function (data, type, row, meta) {
                     let html = '';
                     $.each(me.actions, function (k, v) {
-                        html += `<div class="${v.icon} fa-lg" title="${v.title}" onclick="${v.action}(${meta.row})"></div>&nbsp;`
+                        html += `<div class="${v.icon} fa-lg" style="padding-left:10px;cursor: pointer;font-size: 26px " title="${v.title}" onclick="${v.action}(${meta.row})"></div>`
                     });
                     return html;
                 }
@@ -179,7 +183,8 @@ class Grid {
         }
         let me = this;
         let table = $("#" + this.id).DataTable(this.default);
-        if (me.ajax) {
+        // alert(me.default.ajax);
+        if (me.default.ajax) {
             table.on('xhr', function () {
                 me.data = table.ajax.json();
             });
@@ -200,4 +205,14 @@ class Grid {
         return parts.join(".");
     }
 
+    setAjaxRoute(uri){
+        this.default.ajax = {
+            url: uri,
+            dataSrc: ''
+        };
+    }
+
+    destroy(){
+        // this.default.
+    }
 }

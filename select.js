@@ -51,7 +51,7 @@ class Select {
         }
         return `<div class="form-group ${col}">
                     <label for="exampleFormControlSelect1">${this.title}</label>
-                    <select class="form-control" id="${this.id}" ${this.disable}>
+                    <select class="form-control" id="${this.id}" name="${this.id}" ${this.disable}>
                         ${this.options}
                     </select>
                     <small id="${this.id}Help" class="form-text text-muted">${this.hint}</small>

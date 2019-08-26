@@ -5,69 +5,73 @@ class Request {
         this.params = params.params ? params.params : undefined;
         this.onSuccess = params.onSuccess ? params.onSuccess : undefined;
         this.onFailure = params.onFailure ? params.onFailure : undefined;
-
+        this.formSubmit = params.formSubmit ? params.formSubmit : undefined;
+        this.form = null;
     }
 
-    prepareData() {
-        // let form = $('#event-form');
-        this.form = new FormData(form[0]);
-        let me = this;
-
-        // $.each(me.params, function (key_1, val) {
-        //     if (typeof val === "object") {
-        //         $.each(me.params[key_1], function (key_2, val) {
-        //             if (typeof val === 'object' && val instanceof File) {
-        //                 let k0 = key_2.substr(0, key_2.lastIndexOf('_file'));
-        //                 me.form.append(k0, val);
-        //                 delete me.params[key_1][key_2];
-        //             }
-        //         });
-        //     }
-        // });
-        // // $.each(this.params, function (i, e) {
-        // //     "object" === (void 0 === e ? "undefined" : _typeof(e)) && $.each(me.params[i], function (e, t) {
-        // //         if ("object" === (void 0 === t ? "undefined" : _typeof(t)) && t instanceof File) {
-        // //             var a = e.substr(0, e.lastIndexOf("_file"));
-        // //             me.form.append(a, t), delete me.params[i][e]
-        // //         }
-        // //     })
-        // // }),
-        // this.form.append("p", JSON.stringify(me.params));
-    }
 
     send() {
-        // this.prepareData();
         let me = this;
+
+        if(me.type.toLowerCase() === 'put'){
+            me.type = 'POST';
+        }
+
+        var dataHandler = me.params;
+
+        if(this.formSubmit) {
+            // dataHandler = new FormData(document.getElementById('product-form'));
+            dataHandler  = new FormData();
+
+            let me = this;
+
+            $.each(me.params, function (key_1, val) {
+                if ((typeof val === "undefined" ? "undefined" : typeof(val)) === "object") {
+                    $.each(me.params[key_1], function (key_2, val2) {
+                        console.log(key_1);
+                        console.log(val);
+                        console.log(key_2);
+                        console.log(val2);
+                        if ((typeof val2 === "undefined" ? "undefined" : typeof(val2)) === 'object' /*&& val2 instanceof File*/) {
+                            var k0 = key_1.substr(0, key_1.lastIndexOf('_file'));
+                            dataHandler.append(k0, val2);
+                            delete me.params[key_1][key_2];
+                        }
+                    });
+                }else{
+                    dataHandler.append(key_1, val);
+                }
+            });
+        }
+
+
         $.ajax({
-            url: this.url,
-            type: this.type,
-            data: this.params,
-            // data: this.form,
-            // data: this.form,
-            cache: !1,
-            // dataType: "json",
-            headers: {
-                token: "Request"
-            },
-            // statusCode: {
-            // 0: function() {
-            //     alert('0 status code! user error');
+            url: me.url,
+            type: me.type,
+            data: dataHandler,
+            // enctype: 'multipart/form-data',
+            // cache: false,
+            // dataType: 'json',
+            // headers: {
+            //     "Content-Type": "multipart/form-data",
             // },
-            // 400: function() {
-            //     alert('400 status code! user error');
-            // },404: function() {
-            //     alert('404 status code! user error');
-            // },
-            // 500: function() {
-            //     alert('500 status code! server error');
-            // }
-            // },
-            // processData: !1,
-            // contentType: !1,
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
             success: function (data, textStatus, jqXHR) {
-                if (textStatus === 'success') {
+                // console.log(data);
+                // console.log(textStatus);
+                // console.log(jqXHR);
+                if (jqXHR.status === 200) {
                     me.onSuccess(data);
                 } else {
+                 if (me.verbose == true) {
+                        new Toast({
+                            id: 'toast-fail',
+                            title: 'Fail!',
+                            message: data.message,
+                            type: 'error'
+                        }).show();
+                    }
                     me.onFailure(data);
                 }
                 // return data;
@@ -75,10 +79,16 @@ class Request {
                 // e.message && n.verbose && notification.show(e.message)
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status);
-                console.log(textStatus);
-                console.log(errorThrown);
-                console.log(jqXHR);
+               new Toast({
+                    id: 'toast-fail',
+                    title: 'Internal Server Error',
+                    message: jqXHR.responseJSON.message,
+                    type: 'error'
+                }).show();
+                // console.log(jqXHR.status);
+                // console.log(textStatus);
+                // console.log(errorThrown);
+                // console.log(jqXHR);
 
                 if (jqXHR.status === 422) {
                     me.onFailure(jqXHR.responseJSON);
@@ -86,6 +96,24 @@ class Request {
                     me.onFailure(jqXHR.responseJSON);
                 }
             }
-        })
+        });
+
+        // if(this.formSubmit !== undefined) {
+        //     let form = document.forms.namedItem("product-form");
+        //     let formData  = new FormData(form);
+        //
+        //     let me = this;
+        //     $.each(me.params, function (key, val) {
+        //         if (typeof val === "object" && val instanceof FileList) {
+        //             let k0 = key.substr(0, key.lastIndexOf('_file'));
+        //             formData.append(k0, val);
+        //             delete me.params[key];
+        //         }
+        //     });
+        //     formData.append('params',this.params);
+        //     params = formData;
+        // }
+
+
     }
 }

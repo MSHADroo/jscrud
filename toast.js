@@ -1,14 +1,13 @@
-
 class Toast {
     constructor(params) {
         this.id = params.id ? params.id : 'toast-' + Math.floor(Math.random() * 101);
         this.title = params.title ? params.title : '';
         this.message = params.message ? params.message : '';
+        this.type = params.type ? params.type : 'info';
     }
 
     render() {
-        return `
-                  <div class="toast" style="position: absolute; bottom: 10px; right: 10px; min-width: 300px;">
+        return `<div class="toast" style="position: absolute; bottom: 10px; right: 10px; min-width: 300px;">
                     <div class="toast-header">
                       <!--<img src="..." class="rounded mr-2" alt="...">-->
                       <strong class="mr-auto">${this.title}</strong>
@@ -20,18 +19,25 @@ class Toast {
                     <div class="toast-body">
                        ${this.message}
                     </div>
-                  </div>
-                `;
+                  </div>`;
     }
 
     show() {
-        let html = this.render();
-        $('body').append(html);
-        $('.toast').toast({delay: 3000});
-        $('.toast').toast('show');
-        $('.toast').on('hidden.bs.toast', function (e) {
-            $('.toast').toast('dispose');
-            $('.toast').remove();
+        // let html = this.render();
+        // $('body').append(html);
+        // $('.toast').toast({delay: 5000 , autohide: false});
+        // $('.toast').toast('show');
+        // $('.toast').on('hidden.bs.toast', function (e) {
+        //     $('.toast').toast('dispose');
+        //     $('.toast').remove();
+        // })
+
+
+        Swal.fire({
+            title: this.title,
+            text: this.message,
+            type: this.type,  //success,error,warning,info,question
+            confirmButtonText: 'OK'
         })
     }
 

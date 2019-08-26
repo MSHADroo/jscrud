@@ -97,6 +97,15 @@ class Form {
                         placeholder: v.placeholder,
                         col: v.col
                     }).render();
+                }else if (v.type === 'file') {
+                    me.elementsHtml += new File({
+                        id: v.id,
+                        title: v.title,
+                        placeholder: v.placeholder,
+                        disable: v.disable,
+                        hint: v.hint,
+                        col: v.col
+                    }).render();
                 }
             });
             me.elementsHtml += `</div>`;
@@ -122,12 +131,16 @@ class Form {
     render() {
         this.generateElements();
         this.generateActions();
-        return `<form id="${this.id}">${this.elementsHtml}${this.actionsHtml}</form>`;
+        return `<form id="${this.id}" name="${this.id}" method="post" enctype="multipart/form-data">
+                    ${this.elementsHtml}${this.actionsHtml}
+                </form>`;
     }
 
     renderElements() {
         this.generateElements();
-        return `<form id="${this.id}">${this.elementsHtml}</form>`;
+        return `<form id="${this.id}" name="${this.id}" method="post" enctype="multipart/form-data">
+                    ${this.elementsHtml}
+                </form>`;
     }
 
     renderActions() {
@@ -141,14 +154,22 @@ class Form {
         //     $(`#${v}`).trigger('init-' + v);
         // })
         this.initSelect();
+        this.initFile();
     }
 
     getData() {
         let me = this;
         let data = {};
         $.each(this.cleanColumn, function (k, v) {
-            data[v.id] = $('#' + v.id).val();
+
+            if ($("#" + v.id).get(0).type == 'file') {
+                data[v.id] = $("#" + v.id).prop('name');
+                data[v.id + '_file'] = $("#" + v.id )[0].files;
+            } else {
+                data[v.id] = $('#' + v.id).val();
+            }
         });
+
         return data;
     }
 
@@ -162,6 +183,9 @@ class Form {
                             $('#' + v.id).val(v2).trigger('change');
                             return true;
                         });
+                    }
+                    if (v.type === 'file') {
+                        return true;
                     }
                     $('#' + v.id).val(v2).trigger('change');
                 }
@@ -192,6 +216,7 @@ class Form {
                     // dir: 'rtl',
                     allowClear: true,
                     // language: 'fa',
+                    width: '100%',
                     placeholder: 'Select Me!'
                 });
             }
@@ -221,5 +246,12 @@ class Form {
 
             }
         })
+    }
+
+    initFile() {
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
     }
 }
