@@ -8,6 +8,7 @@ class Grid {
         this.row_number = params.row_number ? params.row_number : undefined;
         this.actions = params.actions ? params.actions : undefined;
         this.params = params.params ? params.params : undefined;
+        this.grid = null;
 
         let me = this;
         $.each(this.columns, function (k, v) {
@@ -139,7 +140,7 @@ class Grid {
                 render: function (data, type, row, meta) {
                     let html = '';
                     $.each(me.actions, function (k, v) {
-                        html += `<div class="${v.icon} fa-lg" style="padding-left:10px;cursor: pointer;font-size: 26px " title="${v.title}" onclick="${v.action}(${meta.row})"></div>`
+                        html += `<div class="${v.icon} fa-lg" style="padding-left:10px;cursor: pointer;font-size: 24px " title="${v.title}" onclick="${v.action}(${meta.row})"></div>`
                     });
                     return html;
                 }
@@ -178,11 +179,15 @@ class Grid {
     }
 
     load() {
+        if (this.grid) {
+            this.destroy();
+        }
         if (this.holder) {
             $('#' + this.holder).html(this.render());
         }
         let me = this;
         let table = $("#" + this.id).DataTable(this.default);
+        this.grid = table;
         // alert(me.default.ajax);
         if (me.default.ajax) {
             table.on('xhr', function () {
@@ -213,6 +218,6 @@ class Grid {
     }
 
     destroy(){
-        // this.default.
+        this.grid.destroy();
     }
 }

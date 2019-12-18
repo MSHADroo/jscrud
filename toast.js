@@ -33,11 +33,11 @@ class Toast {
         // })
 
 
-        Swal.fire({
+        swal({
             title: this.title,
             text: this.message,
-            type: this.type,  //success,error,warning,info,question
-            confirmButtonText: 'OK'
+            icon: this.type,  //success,error,warning,info,question
+            button: 'OK'
         })
     }
 

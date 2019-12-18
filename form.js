@@ -179,6 +179,13 @@ class Form {
             $.each(data, function (k2, v2) {
                 if (v.id === k2) {
                     if (v.type === 'select') {
+                        if(v2 === true){
+                            v2 = 'true'
+                        }
+                        if(v2 === false){
+                            v2 = 'false'
+                        }
+                        console.log(v2);
                         $('#' + v.id).on("bind-" + v.id, function () {
                             $('#' + v.id).val(v2).trigger('change');
                             return true;
@@ -254,4 +261,22 @@ class Form {
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
     }
+
+
+    disable(id){
+        $('#' + id).attr("disabled", "disabled");
+    }
+
+    enable(id){
+        $('#' + id).removeAttr("disabled");
+    }
+
+    show(id){
+        $('#' + id).show();
+    }
+
+    hide(){
+        $('#' + id).hide();
 }
+}
+
